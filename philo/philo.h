@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 10:29:10 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/22 20:58:43 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/07/24 16:28:51 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,5 +15,10 @@
 
 # include <limits.h>
 # include <stdlib.h>
+# include <pthread.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <sys/time.h>
+# include <time.h>
 
 #endif

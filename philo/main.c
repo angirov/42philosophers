@@ -6,27 +6,35 @@
 /*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/21 19:19:29 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/22 21:36:38 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/07/24 18:12:27 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+typedef struct s_wisdom t_wisdom;
+typedef struct s_philo t_philo;
+typedef struct timeval t_tv;
 
-typedef struct s_philo
+struct s_philo
 {
-	int	last_meal;
-}	t_philo;
+	t_wisdom	*wisdom;
+	int			index;
+	t_tv		last_meal;
+};
 
-typedef struct s_wisdom
+struct s_wisdom
 {
-	int	number_of_philosophers;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	number_of_times_each_philosopher_must_eat;
-	t_philo	**philos;
-	int	*forks;
-}	t_wisdom;
+	int				num_ph;
+	int				ms_to_die;
+	int				ms_to_eat;
+	int				ms_to_sleep;
+	int				number_of_times_each_philosopher_must_eat;
+	t_philo			**philos;
+	int				*forks;
+	t_tv			start;
+	pthread_t		*threads;
+	pthread_mutex_t	mtx_print;
+};
 
 size_t	ft_strlen(const char *s)
 {
@@ -149,41 +157,199 @@ int	ft_is_format(int argc, char **argv)
 
 void	ft_set_params(int argc, char **argv, t_wisdom *wisdom)
 {
-	wisdom->number_of_philosophers = ft_atoi(argv[1]);
-	wisdom->time_to_die = ft_atoi(argv[2]);
-	wisdom->time_to_eat = ft_atoi(argv[3]);
-	wisdom->time_to_sleep = ft_atoi(argv[4]);
+	wisdom->num_ph = ft_atoi(argv[1]);
+	wisdom->ms_to_die = ft_atoi(argv[2]);
+	wisdom->ms_to_eat = ft_atoi(argv[3]);
+	wisdom->ms_to_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
 		wisdom->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
 	else
 		wisdom->number_of_times_each_philosopher_must_eat = 0;
 }
 
+long	ft_msec_diff(t_tv before, t_tv after)
+{
+	long	diff_sec;
+	long	diff_msec;
+
+	diff_sec = after.tv_sec - before.tv_sec;
+	diff_msec = (after.tv_usec - before.tv_usec) / 1000;
+	if (diff_msec < 0)
+	{
+		diff_sec--;
+		diff_msec = 1000 + diff_msec;
+	}
+	return(diff_sec * 1000 + diff_msec);
+}
+
+void	ft_now_usec(t_wisdom *wisdom)
+{
+	t_tv	now;
+	long	diff_sec;
+	long	diff_usec;
+
+	gettimeofday(&now, NULL);
+	diff_sec = now.tv_sec - wisdom->start.tv_sec;
+	diff_usec = now.tv_usec - wisdom->start.tv_usec;
+	if (diff_usec < 0)
+	{
+		diff_sec--;
+		diff_usec = 1000000 + diff_usec;
+	}
+	printf("[%02ld:%06ld] ", diff_sec, diff_usec);
+}
+
+void	ft_now(t_wisdom *wisdom)
+{
+	t_tv	now;
+	long	diff_sec;
+	long	diff_msec;
+
+	gettimeofday(&now, NULL);
+	diff_sec = now.tv_sec - wisdom->start.tv_sec;
+	diff_msec = (now.tv_usec - wisdom->start.tv_usec) / 1000;
+	if (diff_msec < 0)
+	{
+		diff_sec--;
+		diff_msec = 1000 + diff_msec;
+	}
+	printf("[%02ld:%03ld] ", diff_sec, diff_msec);
+}
+
 void	ft_init(int argc, char **argv, t_wisdom *wisdom)
 {
 	int	i;
-
+	
+	gettimeofday(&wisdom->start, NULL);
+	printf("Start: %ld:%ld\n", wisdom->start.tv_sec, wisdom->start.tv_usec);
+	
 	if (!ft_is_format(argc, argv))
-		exit(0); /////////////////////////////////////////////////////////////////////////////////////////////////////
+	{
+		printf("Bad imput: usage: philo number_of_philosophers ");
+		printf("ms_to_die ms_to_eat ms_to_sleep ");
+		printf("[number_of_times_each_philosopher_must_eat]\n");
+		exit(0); /////////////////////////////////////////////////
+	}
 	ft_set_params(argc, argv, wisdom);
-	wisdom->forks = malloc(sizeof(int) * wisdom->number_of_philosophers);
-	wisdom->philos = malloc(sizeof(t_philo *) * \
-						(wisdom->number_of_philosophers + 1));
+	wisdom->forks = malloc(sizeof(int) * wisdom->num_ph);
+	wisdom->philos = malloc(sizeof(t_philo *) * wisdom->num_ph);
+	wisdom->threads = malloc(sizeof(pthread_t) * wisdom->num_ph);
+	pthread_mutex_init(&wisdom->mtx_print, NULL);
+
 	i = 0;
-	while (i < wisdom->number_of_philosophers)
+	while (i < wisdom->num_ph)
 	{
 		wisdom->philos[i] = malloc(sizeof(t_philo));
-		wisdom->philos[i]->last_meal = wisdom->time_to_eat;
-		wisdom->forks[i] = 42;
+		wisdom->philos[i]->wisdom = wisdom;
+		wisdom->philos[i]->index = i;
+		wisdom->philos[i]->last_meal = wisdom->start;
+		wisdom->forks[i] = i;
 		i++;
 	}
-	wisdom->philos[i] = NULL;
+}
+
+void	ft_print_action(t_philo *philo, const char *action)
+{
+	pthread_mutex_lock(&philo->wisdom->mtx_print);
+	ft_now(philo->wisdom);
+	printf("Philo %2d %s\n", philo->index, action);
+	pthread_mutex_unlock(&philo->wisdom->mtx_print);
+}
+void	ft_msleep(int	msec)
+{
+	usleep(msec * 1000);
+}
+void	ft_philo_life(t_philo *philo)
+{
+	while (1)
+	{	
+		ft_print_action(philo, "has taken a fork");
+		if (1)
+		{
+			gettimeofday(&philo->last_meal, NULL);
+			ft_print_action(philo, "is eating");
+			ft_msleep(philo->wisdom->ms_to_eat);
+		}
+		ft_print_action(philo, "is sleeping");
+		ft_msleep(philo->wisdom->ms_to_sleep);
+		ft_print_action(philo, "is thinking");
+	}
+}
+
+void	ft_create_threads(t_wisdom *wisdom)
+{
+	int	i;
+
+	i = 0;
+	while (i < wisdom->num_ph)
+	{
+		pthread_create(wisdom->threads + i, NULL, (void *)(&ft_philo_life), wisdom->philos[i]);
+		i++;
+	}
+}
+
+void	ft_join_threads(t_wisdom *wisdom)
+{
+	int	i;
+
+	i = 0;
+	while (i < wisdom->num_ph)
+	{
+		pthread_join(wisdom->threads[i], NULL);
+		i++;
+	}
+	printf("Joined all\n");
+}
+
+void	ft_god(t_wisdom *wisdom)
+{
+	int	i;
+	t_tv	tv;
+	i = 0;
+	while (1)
+	{
+		gettimeofday(&tv, NULL);
+		if (ft_msec_diff(wisdom->philos[i]->last_meal, tv) > wisdom->ms_to_die)
+		{
+			break ;
+		}
+		i = (i + 1) % 5;
+		// printf("Check philo %2d\n", i);
+	}
+	ft_print_action(wisdom->philos[i], "died");
+	// free...
+	exit(42);
 }
 
 int	main(int argc, char **argv)
 {
 	t_wisdom	wisdom;
+	int			i;
 
 	ft_init(argc, argv, &wisdom);
+	ft_create_threads(&wisdom);
+	ft_god(&wisdom);
+	ft_join_threads(&wisdom);
+
+	pthread_mutex_destroy(&wisdom.mtx_print);
 	return (0);
 }
+
+// usleep
+// gettimeofday
+
+// pthread_create
+// pthread_detach
+// pthread_join
+
+// pthread_mutex_init
+// pthread_mutex_destroy
+// pthread_mutex_lock
+// pthread_mutex_unlock
+
+
+// timestamp_in_ms X has taken a fork
+// timestamp_in_ms X is eating
+// timestamp_in_ms X is sleeping
+// timestamp_in_ms X is thinking
+// timestamp_in_ms X died

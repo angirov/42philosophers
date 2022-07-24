@@ -8,7 +8,7 @@ HEADERS = minishell.h
 
 # ========== compilation ==========
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -pthread -Wall -Wextra -Werror -Wno-unused-variable
 
 # ========== rules ==========
 all: $(NAME)
