@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/21 19:19:29 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/24 18:12:27 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/07/24 22:44:16 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ struct s_wisdom
 	t_tv			start;
 	pthread_t		*threads;
 	pthread_mutex_t	mtx_print;
+	pthread_mutex_t	*mtx_forks;
 };
 
 size_t	ft_strlen(const char *s)
@@ -167,53 +168,61 @@ void	ft_set_params(int argc, char **argv, t_wisdom *wisdom)
 		wisdom->number_of_times_each_philosopher_must_eat = 0;
 }
 
-long	ft_msec_diff(t_tv before, t_tv after)
-{
-	long	diff_sec;
-	long	diff_msec;
+// long	ft_msec_diff(t_tv before, t_tv after)
+// {
+// 	long	diff_sec;
+// 	long	diff_msec;
 
-	diff_sec = after.tv_sec - before.tv_sec;
-	diff_msec = (after.tv_usec - before.tv_usec) / 1000;
-	if (diff_msec < 0)
-	{
-		diff_sec--;
-		diff_msec = 1000 + diff_msec;
-	}
-	return(diff_sec * 1000 + diff_msec);
-}
+// 	diff_sec = after.tv_sec - before.tv_sec;
+// 	diff_msec = (after.tv_usec - before.tv_usec) / 1000;
+// 	if (diff_msec < 0)
+// 	{
+// 		diff_sec--;
+// 		diff_msec = 1000 + diff_msec;
+// 	}
+// 	return(diff_sec * 1000 + diff_msec);
+// }
 
-void	ft_now_usec(t_wisdom *wisdom)
+// void	ft_now_usec(t_wisdom *wisdom)
+// {
+// 	t_tv	now;
+// 	long	diff_sec;
+// 	long	diff_usec;
+
+// 	gettimeofday(&now, NULL);
+// 	diff_sec = now.tv_sec - wisdom->start.tv_sec;
+// 	diff_usec = now.tv_usec - wisdom->start.tv_usec;
+// 	if (diff_usec < 0)
+// 	{
+// 		diff_sec--;
+// 		diff_usec = 1000000 + diff_usec;
+// 	}
+// 	printf("[%02ld:%06ld] ", diff_sec, diff_usec);
+// }
+
+// void	ft_now_msec(t_wisdom *wisdom)
+// {
+// 	t_tv	now;
+// 	long	diff_sec;
+// 	long	diff_msec;
+
+// 	gettimeofday(&now, NULL);
+// 	diff_sec = now.tv_sec - wisdom->start.tv_sec;
+// 	diff_msec = (now.tv_usec - wisdom->start.tv_usec) / 1000;
+// 	if (diff_msec < 0)
+// 	{
+// 		diff_sec--;
+// 		diff_msec = 1000 + diff_msec;
+// 	}
+// 	printf("[%02ld:%03ld] ", diff_sec, diff_msec);
+// }
+
+int	ft_now(void)
 {
 	t_tv	now;
-	long	diff_sec;
-	long	diff_usec;
 
 	gettimeofday(&now, NULL);
-	diff_sec = now.tv_sec - wisdom->start.tv_sec;
-	diff_usec = now.tv_usec - wisdom->start.tv_usec;
-	if (diff_usec < 0)
-	{
-		diff_sec--;
-		diff_usec = 1000000 + diff_usec;
-	}
-	printf("[%02ld:%06ld] ", diff_sec, diff_usec);
-}
-
-void	ft_now(t_wisdom *wisdom)
-{
-	t_tv	now;
-	long	diff_sec;
-	long	diff_msec;
-
-	gettimeofday(&now, NULL);
-	diff_sec = now.tv_sec - wisdom->start.tv_sec;
-	diff_msec = (now.tv_usec - wisdom->start.tv_usec) / 1000;
-	if (diff_msec < 0)
-	{
-		diff_sec--;
-		diff_msec = 1000 + diff_msec;
-	}
-	printf("[%02ld:%03ld] ", diff_sec, diff_msec);
+	return (now.tv_sec * 1000 + now.tv_usec / 1000);
 }
 
 void	ft_init(int argc, char **argv, t_wisdom *wisdom)
@@ -235,7 +244,7 @@ void	ft_init(int argc, char **argv, t_wisdom *wisdom)
 	wisdom->philos = malloc(sizeof(t_philo *) * wisdom->num_ph);
 	wisdom->threads = malloc(sizeof(pthread_t) * wisdom->num_ph);
 	pthread_mutex_init(&wisdom->mtx_print, NULL);
-
+	wisdom->mtx_forks = malloc(sizeof(pthread_mutex_t) * wisdom->num_ph);
 	i = 0;
 	while (i < wisdom->num_ph)
 	{
@@ -244,35 +253,68 @@ void	ft_init(int argc, char **argv, t_wisdom *wisdom)
 		wisdom->philos[i]->index = i;
 		wisdom->philos[i]->last_meal = wisdom->start;
 		wisdom->forks[i] = i;
+		pthread_mutex_init(&wisdom->mtx_forks[i], NULL);
 		i++;
 	}
 }
 
-void	ft_print_action(t_philo *philo, const char *action)
+void	ft_print_action(t_philo *philo, const char *action, int fork)
 {
 	pthread_mutex_lock(&philo->wisdom->mtx_print);
-	ft_now(philo->wisdom);
-	printf("Philo %2d %s\n", philo->index, action);
+	printf("[%ld]", ft_now());
+	if (fork >=0)
+		printf("Philo %2d %s [%d]\n", philo->index, action, fork);
+	else
+		printf("Philo %2d %s\n", philo->index, action);
 	pthread_mutex_unlock(&philo->wisdom->mtx_print);
 }
+
 void	ft_msleep(int	msec)
 {
 	usleep(msec * 1000);
 }
+
+void	ft_grab_fork(t_wisdom *wisdom, int fork_i)
+{
+	pthread_mutex_lock(wisdom->mtx_forks + fork_i);
+	
+	pthread_mutex_unlock(wisdom->mtx_forks + fork_i);
+}
+
 void	ft_philo_life(t_philo *philo)
 {
+	int	fork_right;
+	int	fork_left;
+
+	if (philo->index == philo->wisdom->num_ph - 1)
+	{
+		fork_left = philo->wisdom->forks[(philo->index + 1) % philo->wisdom->num_ph];
+		fork_right = philo->wisdom->forks[philo->index];
+	}
+	else
+	{
+		ft_msleep(philo->index * 10);
+		fork_left = philo->wisdom->forks[philo->index];
+		fork_right = philo->wisdom->forks[(philo->index + 1) % philo->wisdom->num_ph];
+	}
 	while (1)
 	{	
-		ft_print_action(philo, "has taken a fork");
-		if (1)
-		{
-			gettimeofday(&philo->last_meal, NULL);
-			ft_print_action(philo, "is eating");
-			ft_msleep(philo->wisdom->ms_to_eat);
-		}
-		ft_print_action(philo, "is sleeping");
+		pthread_mutex_lock(philo->wisdom->mtx_forks + fork_right);
+		ft_print_action(philo, "has taken a right fork", fork_right);
+
+		pthread_mutex_lock(philo->wisdom->mtx_forks + fork_left);
+		ft_print_action(philo, "has taken a left  fork", fork_left);
+		
+		gettimeofday(&philo->last_meal, NULL);
+		ft_print_action(philo, "is eating", -1);
+		ft_msleep(philo->wisdom->ms_to_eat);
+		
+
+		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_left);
+		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_right);
+		ft_print_action(philo, "is sleeping", -1);
 		ft_msleep(philo->wisdom->ms_to_sleep);
-		ft_print_action(philo, "is thinking");
+		ft_print_action(philo, "is thinking", -1);
 	}
 }
 
@@ -305,6 +347,7 @@ void	ft_god(t_wisdom *wisdom)
 {
 	int	i;
 	t_tv	tv;
+
 	i = 0;
 	while (1)
 	{
@@ -313,10 +356,10 @@ void	ft_god(t_wisdom *wisdom)
 		{
 			break ;
 		}
-		i = (i + 1) % 5;
+		i = (i + 1) % wisdom->num_ph;
 		// printf("Check philo %2d\n", i);
 	}
-	ft_print_action(wisdom->philos[i], "died");
+	ft_print_action(wisdom->philos[i], "died", ft_msec_diff(wisdom->philos[i]->last_meal, tv));
 	// free...
 	exit(42);
 }
