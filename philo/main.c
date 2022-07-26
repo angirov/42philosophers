@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/21 19:19:29 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/24 22:44:16 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/07/26 18:48:49 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,20 +168,20 @@ void	ft_set_params(int argc, char **argv, t_wisdom *wisdom)
 		wisdom->number_of_times_each_philosopher_must_eat = 0;
 }
 
-// long	ft_msec_diff(t_tv before, t_tv after)
-// {
-// 	long	diff_sec;
-// 	long	diff_msec;
+long	ft_msec_diff(t_tv before, t_tv after)
+{
+	long	diff_sec;
+	long	diff_msec;
 
-// 	diff_sec = after.tv_sec - before.tv_sec;
-// 	diff_msec = (after.tv_usec - before.tv_usec) / 1000;
-// 	if (diff_msec < 0)
-// 	{
-// 		diff_sec--;
-// 		diff_msec = 1000 + diff_msec;
-// 	}
-// 	return(diff_sec * 1000 + diff_msec);
-// }
+	diff_sec = after.tv_sec - before.tv_sec;
+	diff_msec = (after.tv_usec - before.tv_usec) / 1000;
+	if (diff_msec < 0)
+	{
+		diff_sec--;
+		diff_msec = 1000 + diff_msec;
+	}
+	return(diff_sec * 1000 + diff_msec);
+}
 
 // void	ft_now_usec(t_wisdom *wisdom)
 // {
@@ -217,7 +217,7 @@ void	ft_set_params(int argc, char **argv, t_wisdom *wisdom)
 // 	printf("[%02ld:%03ld] ", diff_sec, diff_msec);
 // }
 
-int	ft_now(void)
+long	ft_now(void)
 {
 	t_tv	now;
 
@@ -252,7 +252,7 @@ void	ft_init(int argc, char **argv, t_wisdom *wisdom)
 		wisdom->philos[i]->wisdom = wisdom;
 		wisdom->philos[i]->index = i;
 		wisdom->philos[i]->last_meal = wisdom->start;
-		wisdom->forks[i] = i;
+		wisdom->forks[i] = 0;
 		pthread_mutex_init(&wisdom->mtx_forks[i], NULL);
 		i++;
 	}
@@ -288,14 +288,14 @@ void	ft_philo_life(t_philo *philo)
 
 	if (philo->index == philo->wisdom->num_ph - 1)
 	{
-		fork_left = philo->wisdom->forks[(philo->index + 1) % philo->wisdom->num_ph];
-		fork_right = philo->wisdom->forks[philo->index];
+		fork_left = (philo->index + 1) % philo->wisdom->num_ph;
+		fork_right = philo->index;
 	}
 	else
 	{
 		ft_msleep(philo->index * 10);
-		fork_left = philo->wisdom->forks[philo->index];
-		fork_right = philo->wisdom->forks[(philo->index + 1) % philo->wisdom->num_ph];
+		fork_left = philo->index;
+		fork_left = (philo->index + 1) % philo->wisdom->num_ph;
 	}
 	while (1)
 	{	
