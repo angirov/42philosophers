@@ -6,28 +6,28 @@
 /*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:41:10 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/26 23:20:39 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/07/27 17:26:08 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long	ft_print_time(void)
+void	ft_print_time(t_wisdom *wisdom)
 {
-	t_tv	now;
+	int64_t	now;
 
-	gettimeofday(&now, NULL);
-	return (now.tv_sec * 1000 + now.tv_usec / 1000);
+	now = ft_usec_now() - wisdom->start;
+	printf("[%03ld:%06ld]", now / 1000000, now % 1000000);
 }
 
 // void	ft_print_action(t_philo *philo, const char *action, int fork)
 // {
 // 	pthread_mutex_lock(&philo->wisdom->mtx_print);
-// 	printf("[%ld] ", ft_print_time());
+// 	printf("[%ld] ", ft_print_time(philo->wisdom));
 // 	if (fork >=0)
-// 		printf("Philo %2d %s [%d]\n", philo->index, action, fork);
+// 		printf("%2d %s [%d]\n", philo->index, action, fork);
 // 	else
-// 		printf("Philo %2d %s\n", philo->index, action);
+// 		printf("%2d %s\n", philo->index, action);
 // 	pthread_mutex_unlock(&philo->wisdom->mtx_print);
 // }
 
@@ -47,14 +47,7 @@ void	ft_print_action_thread(t_print *task)
 	philo = task->philo;
 	action = task->action;
 	num = task->num;
-	pthread_mutex_lock(&philo->wisdom->mtx_print);
-	printf("[%ld] ", ft_print_time());
-	if (num >=0)
-		printf("Philo %2d %s [%d]\n", philo->index, action, num);
-	else
-		printf("Philo %2d %s\n", philo->index, action);
-	pthread_mutex_unlock(&philo->wisdom->mtx_print);
-	free(task);
+	ft_print(philo, action, num);
 	pthread_exit(NULL);
 }
 
@@ -74,10 +67,10 @@ void	ft_print_action(t_philo *philo, const char *action, int num)
 void	ft_print(t_philo *philo, const char *action, int fork)
 {
 	pthread_mutex_lock(&philo->wisdom->mtx_print);
-	printf("[%ld] ", ft_print_time());
+	ft_print_time(philo->wisdom);
 	if (fork >=0)
-		printf("Philo %2d %s [%d]\n", philo->index, action, fork);
+		printf(" %2d %s [%d]\n", philo->index, action, fork);
 	else
-		printf("Philo %2d %s\n", philo->index, action);
+		printf(" %2d %s\n", philo->index, action);
 	pthread_mutex_unlock(&philo->wisdom->mtx_print);
 }

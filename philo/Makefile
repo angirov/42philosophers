@@ -4,6 +4,7 @@ SRCS =	main.c \
 		utils.c \
 		init.c \
 		time.c \
+		philo.c \
 		print.c
 
 OBJ = ${SRCS:.c=.o}

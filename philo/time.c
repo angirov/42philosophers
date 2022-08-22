@@ -6,28 +6,48 @@
 /*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:41:21 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/26 20:41:26 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/07/27 16:17:04 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long	ft_usec_diff(t_tv last_meal)
+int64_t	 ft_usec_now(void)
 {
-	long	diff_sec;
-	long	diff_usec;
-	t_tv	now;
+	t_tv		now;
 
 	gettimeofday(&now, NULL);
-	diff_sec = now.tv_sec - last_meal.tv_sec;
-	diff_usec = (now.tv_usec - last_meal.tv_usec);
-	if (diff_usec < 0)
-	{
-		diff_sec--;
-		diff_usec = 1000000 + diff_usec;
-	}
-	return(diff_sec * 1000000 + diff_usec);
+	return (now.tv_sec * 1000000 + now.tv_usec);
 }
+
+void	ft_wait(int64_t usec_wait)
+{
+	int64_t	usec_end;
+
+	usec_end = ft_usec_now() + usec_wait;
+	while (ft_usec_now() < usec_end)
+	{
+		usleep(50);
+	}
+	return ;
+}
+
+// long	ft_usec_diff(t_tv last_meal)
+// {
+// 	long	diff_sec;
+// 	long	diff_usec;
+// 	t_tv	now;
+
+// 	gettimeofday(&now, NULL);
+// 	diff_sec = now.tv_sec - last_meal.tv_sec;
+// 	diff_usec = (now.tv_usec - last_meal.tv_usec);
+// 	if (diff_usec < 0)
+// 	{
+// 		diff_sec--;
+// 		diff_usec = 1000000 + diff_usec;
+// 	}
+// 	return(diff_sec * 1000000 + diff_usec);
+// }
 
 // void	ft_msleep(int	msec)
 // {
