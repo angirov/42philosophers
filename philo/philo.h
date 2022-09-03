@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 10:29:10 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/27 17:20:38 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/08/23 18:29:25 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ struct s_philo
 	int64_t			last_meal;
 	int64_t			death_time;
 	pthread_mutex_t	mtx_last;
+	int				times_eaten;
 };
 
 struct s_wisdom
@@ -42,7 +43,7 @@ struct s_wisdom
 	int64_t			us_to_die;
 	int64_t			us_to_eat;
 	int64_t			us_to_sleep;
-	int				number_of_times_each_philosopher_must_eat;
+	int				num_to_eat;
 	t_philo			**philos;
 	int				*forks;
 	int64_t			start;

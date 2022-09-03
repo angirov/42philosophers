@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:41:10 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/27 17:26:08 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/08/22 18:51:44 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ void	ft_print_time(t_wisdom *wisdom)
 	int64_t	now;
 
 	now = ft_usec_now() - wisdom->start;
-	printf("[%03ld:%06ld]", now / 1000000, now % 1000000);
+	printf("[msec: %03lld:%03lld]", now / 1000000, (now % 1000000) / 1000);
+	printf("[usec: %03lld:%06lld]", now / 1000000, now % 1000000);
 }
 
 // void	ft_print_action(t_philo *philo, const char *action, int fork)

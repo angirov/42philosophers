@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/27 00:36:41 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/27 18:31:14 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/08/23 19:21:49 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	ft_philo_life(t_philo *philo)
 	int	fork_left;
 
 	ft_desync(philo, &fork_right, &fork_left);
-	while (!philo->wisdom->death)
+	while (!philo->wisdom->death && philo->times_eaten < philo->wisdom->num_to_eat)
 	{	
 		pthread_mutex_lock(philo->wisdom->mtx_forks + fork_right);
 		ft_print_action(philo, "has taken a right forkk", fork_right);
@@ -79,7 +79,7 @@ void	ft_philo_life(t_philo *philo)
 		
 		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_right);
 		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_left);
-
+		philo->times_eaten++; /////////////////////// or should thye break here???
 		ft_print_action(philo, "is sleeping", -1);
 		ft_wait(philo->wisdom->us_to_sleep);
 

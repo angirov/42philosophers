@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:40:51 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/27 17:23:01 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/08/23 18:29:57 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,9 @@ void	ft_set_params(int argc, char **argv, t_wisdom *wisdom)
 	wisdom->us_to_eat = ft_atoi(argv[3])* 1000;
 	wisdom->us_to_sleep = ft_atoi(argv[4])* 1000;
 	if (argc == 6)
-		wisdom->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
+		wisdom->num_to_eat = ft_atoi(argv[5]);
 	else
-		wisdom->number_of_times_each_philosopher_must_eat = 0;
+		wisdom->num_to_eat = 0;
 }
 
 int	ft_init(int argc, char **argv, t_wisdom *wisdom)

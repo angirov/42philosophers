@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/21 19:19:29 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/27 15:47:47 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/08/23 19:19:29 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	ft_philo_liffe(t_philo *philo)
 {
+	printf("HHHHHHHHHHHHHHHHHH\n");
+
 	int	fork_right;
 	int	fork_left;
 	long	us_to_eat;
@@ -33,8 +35,8 @@ void	ft_philo_liffe(t_philo *philo)
 	}
 	if (philo->index %2 == 0)
 		usleep(15000);
-	// usleep(100 * philo->index);
-	while (!philo->wisdom->death)
+	ft_print(philo, "num to eat:", philo->wisdom->num_to_eat);
+	while (!philo->wisdom->death && philo->times_eaten < philo->wisdom->num_to_eat)
 	{	
 		while(!philo->wisdom->death)
 		{
@@ -76,11 +78,11 @@ void	ft_philo_liffe(t_philo *philo)
 		ft_print_action(philo, "is eating", -1);
 		usleep(us_to_eat);
 		
-		
 		philo->wisdom->forks[fork_left] = 0;
 		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_left);
 		philo->wisdom->forks[fork_right] = 0;
 		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_right);
+		philo->times_eaten++; /////////////////////// or should thye break here???
 		ft_print_action(philo, "is sleeping", -1);
 		usleep(us_to_sleep);
 		ft_print_action(philo, "is thinking", -1);
