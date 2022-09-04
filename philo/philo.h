@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 10:29:10 by vangirov          #+#    #+#             */
-/*   Updated: 2022/08/23 18:29:25 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/09/04 21:35:52 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ struct s_philo
 {
 	t_wisdom		*wisdom;
 	int				index;
+	int				number;
 	int64_t			last_meal;
 	int64_t			death_time;
 	pthread_mutex_t	mtx_last;

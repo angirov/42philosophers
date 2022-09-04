@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:40:51 by vangirov          #+#    #+#             */
-/*   Updated: 2022/08/23 18:29:57 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/09/04 22:20:27 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	ft_set_params(int argc, char **argv, t_wisdom *wisdom)
 	if (argc == 6)
 		wisdom->num_to_eat = ft_atoi(argv[5]);
 	else
-		wisdom->num_to_eat = 0;
+		wisdom->num_to_eat = -1;
 }
 
 int	ft_init(int argc, char **argv, t_wisdom *wisdom)
@@ -98,6 +98,7 @@ int	ft_init(int argc, char **argv, t_wisdom *wisdom)
 		wisdom->philos[i] = malloc(sizeof(t_philo));
 		wisdom->philos[i]->wisdom = wisdom;
 		wisdom->philos[i]->index = i;
+		wisdom->philos[i]->number = i + 1;
 		wisdom->forks[i] = 0;
 		pthread_mutex_init(&wisdom->mtx_forks[i], NULL);
 		pthread_mutex_init(&wisdom->philos[i]->mtx_last, NULL);
