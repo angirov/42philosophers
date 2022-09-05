@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:41:21 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/27 16:17:04 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/09/05 20:43:06 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int64_t	 ft_usec_now(void)
+int64_t	ft_usec_now(void)
 {
 	t_tv		now;
 

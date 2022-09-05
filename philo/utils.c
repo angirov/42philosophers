@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:41:01 by vangirov          #+#    #+#             */
-/*   Updated: 2022/07/26 20:43:06 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/09/05 20:42:48 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ int	ft_digittonum(char c)
 	num = c - '0';
 	return (num);
 }
-
 
 int	ft_atoi(const char *nptr)
 {

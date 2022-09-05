@@ -3,6 +3,7 @@ NAME = philo
 SRCS =	main.c \
 		utils.c \
 		init.c \
+		init2.c \
 		time.c \
 		philo.c \
 		print.c

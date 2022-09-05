@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 10:29:10 by vangirov          #+#    #+#             */
-/*   Updated: 2022/09/04 21:35:52 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/09/05 20:57:16 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@
 # include <time.h>
 # include <stdint.h>
 
-typedef struct s_wisdom t_wisdom;
-typedef struct s_philo t_philo;
-typedef struct timeval t_tv;
+typedef struct s_wisdom	t_wisdom;
+typedef struct s_philo	t_philo;
+typedef struct timeval	t_tv;
 
 struct s_philo
 {
@@ -40,6 +40,7 @@ struct s_philo
 struct s_wisdom
 {
 	int				death;
+	int				done;
 	int				num_ph;
 	int64_t			us_to_die;
 	int64_t			us_to_eat;
@@ -56,10 +57,12 @@ struct s_wisdom
 int			ft_isdigit(int c);
 int			ft_atoi(const char *nptr);
 long		ft_atol(const char *nptr);
+int			ft_is_format(int argc, char **argv);
 int			ft_init(int argc, char **argv, t_wisdom *wisdom);
+int			ft_free(t_wisdom *wisdom);
 
-int64_t	 ft_usec_now(void);
-void	ft_wait(int64_t usec_wait);
+int64_t		ft_usec_now(void);
+void		ft_wait(int64_t usec_wait);
 
 void		ft_print_time(t_wisdom *wisdom);
 void		ft_print_action(t_philo *philo, const char *action, int fork);
