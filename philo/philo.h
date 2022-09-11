@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 10:29:10 by vangirov          #+#    #+#             */
-/*   Updated: 2022/09/05 20:57:16 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/09/11 20:46:01 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ struct s_wisdom
 	int				*forks;
 	int64_t			start;
 	pthread_t		*threads;
+	pthread_mutex_t	mtx_done;
+	pthread_mutex_t	mtx_death;
 	pthread_mutex_t	mtx_print;
 	pthread_mutex_t	*mtx_forks;
 };
@@ -69,5 +71,10 @@ void		ft_print_action(t_philo *philo, const char *action, int fork);
 void		ft_print(t_philo *philo, const char *action, int fork);
 void		ft_philo_life(t_philo *philo);
 void		ft_god(t_wisdom *wisdom);
+
+int			get_death(t_wisdom *wisdom);
+void		set_death(t_wisdom *wisdom, int value);
+int			get_done(t_wisdom *wisdom);
+void		set_done(t_wisdom *wisdom, int value);
 
 #endif

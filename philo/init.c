@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:40:51 by vangirov          #+#    #+#             */
-/*   Updated: 2022/09/05 20:55:18 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/09/11 19:57:29 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ int	ft_init(int argc, char **argv, t_wisdom *wisdom)
 	wisdom->forks = malloc(sizeof(int) * wisdom->num_ph);
 	wisdom->philos = malloc(sizeof(t_philo *) * wisdom->num_ph);
 	wisdom->threads = malloc(sizeof(pthread_t) * wisdom->num_ph);
+	pthread_mutex_init(&wisdom->mtx_done, NULL);
+	pthread_mutex_init(&wisdom->mtx_death, NULL);
 	pthread_mutex_init(&wisdom->mtx_print, NULL);
 	wisdom->done = 0;
 	wisdom->mtx_forks = malloc(sizeof(pthread_mutex_t) * wisdom->num_ph);

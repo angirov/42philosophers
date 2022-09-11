@@ -6,7 +6,8 @@ SRCS =	main.c \
 		init2.c \
 		time.c \
 		philo.c \
-		print.c
+		print.c \
+		mutex.c
 
 OBJ = ${SRCS:.c=.o}
 
