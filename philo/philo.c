@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/27 00:36:41 by vangirov          #+#    #+#             */
-/*   Updated: 2022/09/11 20:45:44 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/09/11 21:31:39 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,15 @@ void	ft_desync(t_philo *philo, int *fork_right, int *fork_left)
 {
 	*fork_right = (philo->index + 1) % philo->wisdom->num_ph;
 	*fork_left = philo->index;
-	if (philo->index == philo->wisdom->num_ph - 1)
-	{
-		*fork_left = (philo->index + 1) % philo->wisdom->num_ph;
-		*fork_right = philo->index;
-	}
+	// if (philo->index == philo->wisdom->num_ph - 1)
+	// {
+	// 	*fork_left = (philo->index + 1) % philo->wisdom->num_ph;
+	// 	*fork_right = philo->index;
+	// 	// ft_wait(1000);
+	// }
 	if (philo->index % 2)
 	{
-		usleep(15000 + 1000 * philo->index);
+		ft_wait(100000); // + 1000 * philo->index);
 	}
 }
 
@@ -98,10 +99,10 @@ void	ft_philo_life(t_philo *philo)
 		philo->wisdom->forks[fork_left] = 1;
 		if (!get_death(philo->wisdom))
 			ft_eat(philo);
-		philo->wisdom->forks[fork_left] = 0;
-		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_left);
 		philo->wisdom->forks[fork_right] = 0;
 		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_right);
+		philo->wisdom->forks[fork_left] = 0;
+		pthread_mutex_unlock(philo->wisdom->mtx_forks + fork_left);
 		ft_print_action(philo, "is sleeping", -1);
 		ft_wait(philo->wisdom->us_to_sleep);
 		ft_print_action(philo, "is thinking", -1);
