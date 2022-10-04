@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/21 19:19:29 by vangirov          #+#    #+#             */
-/*   Updated: 2022/10/04 16:28:46 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/10/04 19:39:46 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ int	main(int argc, char **argv)
 		ft_god(&wisdom);
 		ft_join_threads(&wisdom);
 		ft_free(&wisdom);
-		exit(0);
 	}
 	else
 		return (1);
