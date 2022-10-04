@@ -6,39 +6,11 @@
 /*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/27 00:36:41 by vangirov          #+#    #+#             */
-/*   Updated: 2022/10/04 15:38:37 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/10/04 16:28:29 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	ft_god(t_wisdom *wisdom)
-{
-	int		i;
-	int64_t	us_to_die;
-	int64_t	diff;
-
-	us_to_die = wisdom->us_to_die;
-	i = 0;
-	while (1)
-	{
-		if (wisdom->num_to_eat > 0
-			&& get_done(wisdom) >= wisdom->num_ph)
-			break ;
-		pthread_mutex_lock(&wisdom->philos[i]->mtx_last);
-		if (ft_usec_now() > wisdom->philos[i]->last_meal + us_to_die)
-		{
-			set_death(wisdom, 1);
-			diff = (ft_usec_now() - (wisdom->philos[i]->last_meal + us_to_die));
-			ft_print_action(wisdom->philos[i], "died", diff / 1000);
-			pthread_mutex_unlock(&wisdom->philos[i]->mtx_last);
-			break ;
-		}
-		pthread_mutex_unlock(&wisdom->philos[i]->mtx_last);
-		i = (i + 1) % wisdom->num_ph;
-		usleep(100);
-	}
-}
 
 void	ft_desync(t_philo *philo, int *fork_right, int *fork_left)
 {
@@ -75,6 +47,19 @@ void	ft_eat(t_philo *philo)
 	ft_wait(philo->wisdom->us_to_eat);
 }
 
+int	ft_take_forks(t_philo *philo, int fork_right, int fork_left)
+{
+	pthread_mutex_lock(philo->wisdom->mtx_forks + fork_right);
+	ft_print_action(philo, "has taken a right fork", fork_right + 1);
+	philo->wisdom->forks[fork_right] = 1;
+	if (fork_right == fork_left)
+		return (0);
+	pthread_mutex_lock(philo->wisdom->mtx_forks + fork_left);
+	ft_print_action(philo, "has taken a left  fork", fork_left + 1);
+	philo->wisdom->forks[fork_left] = 1;
+	return (1);
+}
+
 void	ft_philo_life(t_philo *philo)
 {
 	int	fork_right;
@@ -84,13 +69,9 @@ void	ft_philo_life(t_philo *philo)
 	ft_desync(philo, &fork_right, &fork_left);
 	while (!get_death(philo->wisdom) && (philo->wisdom->num_to_eat < 0
 			|| get_eaten(philo) < philo->wisdom->num_to_eat))
-	{	
-		pthread_mutex_lock(philo->wisdom->mtx_forks + fork_right);
-		ft_print_action(philo, "has taken a right fork", fork_right + 1);
-		philo->wisdom->forks[fork_right] = 1;
-		pthread_mutex_lock(philo->wisdom->mtx_forks + fork_left);
-		ft_print_action(philo, "has taken a left  fork", fork_left + 1);
-		philo->wisdom->forks[fork_left] = 1;
+	{
+		if (!ft_take_forks(philo, fork_right, fork_left))
+			break ;
 		if (!get_death(philo->wisdom))
 			ft_eat(philo);
 		philo->wisdom->forks[fork_right] = 0;

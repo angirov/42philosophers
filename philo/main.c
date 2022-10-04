@@ -3,14 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/21 19:19:29 by vangirov          #+#    #+#             */
-/*   Updated: 2022/09/11 20:46:32 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/10/04 16:28:46 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	ft_god(t_wisdom *wisdom)
+{
+	int		i;
+	int64_t	us_to_die;
+	int64_t	diff;
+
+	us_to_die = wisdom->us_to_die;
+	i = 0;
+	while (1)
+	{
+		if (wisdom->num_to_eat > 0
+			&& get_done(wisdom) >= wisdom->num_ph)
+			break ;
+		pthread_mutex_lock(&wisdom->philos[i]->mtx_last);
+		if (ft_usec_now() > wisdom->philos[i]->last_meal + us_to_die)
+		{
+			set_death(wisdom, 1);
+			diff = (ft_usec_now() - (wisdom->philos[i]->last_meal + us_to_die));
+			ft_print_action(wisdom->philos[i], "died", diff / 1000);
+			pthread_mutex_unlock(&wisdom->philos[i]->mtx_last);
+			break ;
+		}
+		pthread_mutex_unlock(&wisdom->philos[i]->mtx_last);
+		i = (i + 1) % wisdom->num_ph;
+		usleep(100);
+	}
+}
 
 void	ft_create_threads(t_wisdom *wisdom)
 {
@@ -52,6 +80,7 @@ int	main(int argc, char **argv)
 		ft_god(&wisdom);
 		ft_join_threads(&wisdom);
 		ft_free(&wisdom);
+		exit(0);
 	}
 	else
 		return (1);
