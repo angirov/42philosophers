@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/27 00:36:41 by vangirov          #+#    #+#             */
-/*   Updated: 2022/09/11 21:31:39 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/10/04 15:38:37 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,9 @@ void	ft_desync(t_philo *philo, int *fork_right, int *fork_left)
 {
 	*fork_right = (philo->index + 1) % philo->wisdom->num_ph;
 	*fork_left = philo->index;
-	// if (philo->index == philo->wisdom->num_ph - 1)
-	// {
-	// 	*fork_left = (philo->index + 1) % philo->wisdom->num_ph;
-	// 	*fork_right = philo->index;
-	// 	// ft_wait(1000);
-	// }
 	if (philo->index % 2)
 	{
-		ft_wait(100000); // + 1000 * philo->index);
+		ft_wait(100000);
 	}
 }
 
