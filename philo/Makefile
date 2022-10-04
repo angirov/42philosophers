@@ -21,7 +21,7 @@ CFLAGS = -pthread -Wall -Wextra -Werror -Wno-unused-variable
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(OBJ) -o $(NAME)
+	$(CC) $(OBJ) -o $(NAME) -g -fsanitize=thread
 # -fsanitize=address
 
 %.o: %.c $(HEADERS) makelibs
