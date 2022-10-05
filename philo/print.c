@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vangirov <vangirov@student.42wolfsburg.    +#+  +:+       +#+        */
+/*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/26 20:41:10 by vangirov          #+#    #+#             */
-/*   Updated: 2022/09/11 20:39:06 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:34:48 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	ft_print_time(t_wisdom *wisdom)
 
 void	ft_print_action(t_philo *philo, const char *action, int fork)
 {
+	if (get_death(philo->wisdom))
+		return ;
 	pthread_mutex_lock(&philo->wisdom->mtx_print);
 	ft_print_time(philo->wisdom);
 	if (fork >= 0)

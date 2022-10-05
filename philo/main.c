@@ -6,7 +6,7 @@
 /*   By: vangirov <vangirov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/21 19:19:29 by vangirov          #+#    #+#             */
-/*   Updated: 2022/10/04 19:39:46 by vangirov         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:12:20 by vangirov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ void	ft_god(t_wisdom *wisdom)
 		pthread_mutex_lock(&wisdom->philos[i]->mtx_last);
 		if (ft_usec_now() > wisdom->philos[i]->last_meal + us_to_die)
 		{
-			set_death(wisdom, 1);
 			diff = (ft_usec_now() - (wisdom->philos[i]->last_meal + us_to_die));
 			ft_print_action(wisdom->philos[i], "died", diff / 1000);
+			set_death(wisdom, 1);
 			pthread_mutex_unlock(&wisdom->philos[i]->mtx_last);
 			break ;
 		}
